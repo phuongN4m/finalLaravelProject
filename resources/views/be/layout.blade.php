@@ -12,13 +12,13 @@
     <title>SB Admin 2 - Dashboard</title>
 
     <!-- Custom fonts for this template-->
-    <link href="{{ asset('/admin/vendor/fontawesome-free/css/all.min.css' )}}" rel="stylesheet" type="text/css">
+    <link href="{{asset('/admin/vendor/fontawesome-free/css/all.min.css')}}" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
 
     <!-- Custom styles for this template-->
-    <link href="{{ asset('/admin/css/sb-admin-2.min.css' )}}" rel="stylesheet">
-    <!-- Data Table  -->
-    <link href="{{ asset('/admin/vendor/datatables/dataTables.bootstrap4.min.css') }} " rel="stylesheet">
+    <link href="{{asset('/admin/css/sb-admin-2.min.css')}}" rel="stylesheet">
+    <link href="{{asset('/admin/vendor/datatables/dataTables.bootstrap4.min.css')}}" rel="stylesheet">
+    <script src="https://cdn.ckeditor.com/ckeditor5/40.0.0/classic/ckeditor.js"></script>
 
 </head>
 
@@ -43,7 +43,7 @@
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item active">
-                <a class="nav-link" href="index.html">
+                <a class="nav-link" href="{{route('admin.dashboard')}}">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Dashboard</span></a>
             </li>
@@ -51,22 +51,16 @@
             <!-- Divider -->
             <hr class="sidebar-divider">
 
-            <!-- Heading -->
-            <div class="sidebar-heading">
-                Interface
-            </div>
-
             <!-- Nav Item - Pages Collapse Menu -->
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
                     <i class="fas fa-fw fa-cog"></i>
-                    <span>Components</span>
+                    <span>Tài khoản</span>
                 </a>
                 <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Custom Components:</h6>
-                        <a class="collapse-item" href="buttons.html">Buttons</a>
-                        <a class="collapse-item" href="cards.html">Cards</a>
+                        <a class="collapse-item" href="{{route('admin.user.list')}}">Danh sách</a>
+                        <a class="collapse-item" href="{{route('admin.user.add')}}">Thêm</a>
                     </div>
                 </div>
             </li>
@@ -139,11 +133,6 @@
             </div>
 
             <!-- Sidebar Message -->
-            <div class="sidebar-card d-none d-lg-flex">
-                <img class="sidebar-card-illustration mb-2" src="img/undraw_rocket.svg" alt="...">
-                <p class="text-center mb-2"><strong>SB Admin Pro</strong> is packed with premium features, components, and more!</p>
-                <a class="btn btn-success btn-sm" href="https://startbootstrap.com/theme/sb-admin-pro">Upgrade to Pro!</a>
-            </div>
 
         </ul>
         <!-- End of Sidebar -->
@@ -311,8 +300,8 @@
                         <!-- Nav Item - User Information -->
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Douglas McGee</span>
-                                <img class="img-profile rounded-circle" src="img/undraw_profile.svg">
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{\Illuminate\Support\Facades\Auth::user()->name}}</span>
+                                <img class="img-profile rounded-circle" src="{{asset(\Illuminate\Support\Facades\Auth::user()->images->path)}}">
                             </a>
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
@@ -343,21 +332,23 @@
 
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
-
-                    @if(session('success'))
-                    <div class="alert alert-success" role="alert">
-                        A simple success alert—check it out!
+                    @if(\Illuminate\Support\Facades\Session::has('success'))
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <strong>Success!</strong>{{\Illuminate\Support\Facades\Session::get('success')}}.
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
                     </div>
                     @endif
-
-                    @if(session('error'))
-                    <div class="alert alert-danger" role="alert">
-                        A simple danger alert—check it out!
+                    @if(\Illuminate\Support\Facades\Session::has('error'))
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <strong>Success!</strong>{{\Illuminate\Support\Facades\Session::get('error')}}.
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
                     </div>
                     @endif
-
                     @yield('content')
-
                 </div>
                 <!-- /.container-fluid -->
 
@@ -395,38 +386,48 @@
                         <span aria-hidden="true">×</span>
                     </button>
                 </div>
-                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+                <div class="modal-body">Bạn có chắc chắn muốn đăng xuất.</div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-primary" href="login.html">Logout</a>
+                    <a class="btn btn-primary" href="{{route('logout')}}">Logout</a>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Bootstrap core JavaScript-->
-    <script src="{{ asset('/admin/vendor/jquery/jquery.min.js') }}"></script>
-    <script src=" {{asset('/admin/vendor/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
+    <script src="{{asset('/admin/vendor/jquery/jquery.min.js')}}"></script>
+    <script src="{{asset('/admin/vendor/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
 
     <!-- Core plugin JavaScript-->
-    <script src=" {{asset('/admin/vendor/jquery-easing/jquery.easing.min.js')}}"></script>
+    <script src="{{asset('/admin/vendor/jquery-easing/jquery.easing.min.js')}}"></script>
 
     <!-- Custom scripts for all pages-->
     <script src="{{asset('/admin/js/sb-admin-2.min.js')}}"></script>
 
     <!-- Page level plugins -->
-    <script src=" {{asset('/admin/vendor/chart.js/Chart.min.js')}}"></script>
+    <script src="{{asset('/admin/vendor/chart.js/Chart.min.js')}}"></script>
 
     <!-- Page level custom scripts -->
     <script src="{{asset('/admin/js/demo/chart-area-demo.js')}}"></script>
     <script src="{{asset('/admin/js/demo/chart-pie-demo.js')}}"></script>
-
-    <!-- Data Table -> Pagination -->
-    <script src="{{ asset('/admin/vendor/datatables/jquery.dataTables.min.js ') }}"></script>
-    <script src="{{ asset('/admin/vendor/datatables/dataTables.bootstrap4.min.js') }}"></script>
+    <script src="{{asset('/admin/vendor/datatables/jquery.dataTables.min.js')}}"></script>
+    <script src="{{asset('/admin/vendor/datatables/dataTables.bootstrap4.min.js')}}"></script>
 
     <!-- Page level custom scripts -->
-    <script src="{{ asset('/admin/js/demo/datatables-demo.js') }} "></script>
+    <script src="{{asset('/admin/js/demo/datatables-demo.js')}}"></script>
+    <script>
+        ClassicEditor
+            .create(document.querySelector('#editor'), {
+                ckfinder: {
+                    uploadUrl: `{{route('ckeditor.upload').'?_token='.csrf_token()}}`,
+                }
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    </script>
+
 
 </body>
 

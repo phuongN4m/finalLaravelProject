@@ -7,10 +7,14 @@
         <form action="{{route('admin.category.doEdit', $id)}}" method="POST">
             @csrf
             <div class="form-group">
-                <label for="name">Ten</label>
+                <label for="name">id</label>
+                <input type="text" class="form-control" id="id" name="id" value="{{$id}}" readonly>
+            </div>
+            <div class="form-group">
+                <label for="name">Tên danh mục</label>
                 <input type="text" class="form-control" id="name" name="name" value="{{$data->name}}">
             </div>
-            <button type="submit" class="btn btn-primary">Them</button>
+            <button type="submit" class="btn btn-primary">Sửa</button>
         </form>
     </div>
 </div>

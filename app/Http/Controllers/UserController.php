@@ -18,10 +18,12 @@ class UserController extends Controller implements iCRUD
         $list = User::all();
         return view('be.user.list')->with(['list' => $list]);
     }
+
     public function add()
     {
         return view('be.user.add');
     }
+
     public function doAdd(Request $request)
     {
         try {
@@ -53,58 +55,79 @@ class UserController extends Controller implements iCRUD
             ]);
         }
     }
+
     public function edit($id)
     {
-        $data = User::find($id);
+        $user = User::find($id);
         return view('be.user.edit')->with([
-            'data' => $data,
+            'data' => $user,
             'id' => $id
         ]);
     }
+
     public function doEdit(Request $request)
     {
+
         try {
             DB::beginTransaction();
+            // get input
             $data = $request->all();
-            // dd($data);
+            $fileImage = $request->file('img');
             $user = User::find($data['id']);
-            // dd($user);
-            $file = $request->file('img');
+
+            // update img
+            // get the old img
+            $image = $user->images;
+
+            // if user want to change avatar
+            if (!empty($fileImage)) {
+                // get the input img
+                $inputImage = $data['img'];
+                // change the image name
+                $imageName = time() . $fileImage->getClientOriginalName();
+                // save to /public/user/
+                $inputImage->storeAs('/user', $imageName, 'public');
+                // update the path
+                $image->path = '/storage/user/' . $imageName;
+                // update img info
+                $image->imageable_id = $user->id;
+                $image->imageable_type = User::class;
+                try {
+                    $image->save();
+                } catch (\Exception $e) {
+                    return ('Failed to save, ' . $e->getMessage());
+                }
+
+            } else {
+                // keep the old path
+                $image['path'] = $user->images->path;
+            }
             unset($data['_token']);
             unset($data['img']);
-
             $data['password'] = Hash::make($data['password']);
+            User::where('id', '=', $data['id'])->update($data);
 
-            User::where('id', $data['id'])->update($data);
-            if (empty($file)) {
-                $image['path'] = $user->image->path;
-            } else {
-                $idImage  = $user->image->id;
-                $fileName = time() . $file->getClientOriginalName();
-                $file->storeAs('/user', $fileName, 'public');
-                $image = new Image();
-                $image['imageable_id']   = $user->id;
-                $image['imageable_type'] = User::class;
-                $image['path']           = '/storage/user/' . $fileName;
-                Image::where('id', $idImage)->delete();
-                $image->save();
-            }
             DB::commit();
         } catch (\Exception $exception) {
             DB::rollBack();
-            return redirect()->back()->with('error', "Sửa thất bại" . $exception->getMessage());
+            return redirect()->back()->with('error', "Sửa thất bại, " . $exception->getMessage());
         }
         return redirect()->route('admin.user.list')->with('success', "Sửa thành công");
     }
+
     public function delete(Request $request)
     {
+//        dd($request->id);
         $user = User::find($request->id);
-        $imageId  = $user->image;
+//        dd(User::find($request->id));
+        $imageId = $user->images->id;
         try {
             $user->delete();
             Image::where('id', $imageId)->delete();
         } catch (Exception $e) {
             return "Xoa that bai..." . $e->getMessage();
         }
+
+        return redirect()->route('admin.user.list')->with('success', "Xóa thành công");
     }
 }
