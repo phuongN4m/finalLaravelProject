@@ -29,14 +29,19 @@ class ProductController extends Controller implements iCRUD
 
     public function doAdd(Request $request)
     {
-
+//        dd($request->all());
         try {
             DB::beginTransaction();
             $data = $request->all();
+//            dd($data);
             $files = $data['img'];
+//            dd($files);
             unset($data['_token']);
+//            dd($data);
             unset($data['img']);
-            $product = Product::create($data);
+//            dd($data);
+            $product = (new \App\Models\Product)->create($data);
+//            dd($product);
             if ($files && count($files) > 0) {
                 for ($i = 0; $i < count($files); $i++) {
                     $fileName = time() . $i . $files[$i]->getClientOriginalName();
@@ -59,16 +64,75 @@ class ProductController extends Controller implements iCRUD
     public function edit($id)
     {
         // TODO: Implement edit() method.
+        $product = Product::find($id);
+        $categories = Category::all();
+        $sales = Sale::all();
+        return view('be.product.edit')->with([
+            'id' => $id,
+            'product' => $product,
+            'categories' => $categories,
+            'sales' => $sales
+        ]);
     }
 
     public function doEdit(Request $request)
     {
         // TODO: Implement doEdit() method.
+        try {
+            DB::beginTransaction();
+            // get the update info
+            $updateInfo = $request->all();
+//            dd($updateInfo);
+            // get the target product
+            $product = Product::find($request->id);
+            // get the old imgs
+//            $images = $product->images;
+//            dd($images);
+
+//            // get the update imgs
+//            $updateImages = $request->file('img');
+//            dd($updateImages);
+
+            unset($updateInfo['_token']);
+//            unset($updateInfo['img']);
+////            dd($updateInfo);
+//
+////            dd($product);
+//
+//            // update imgs
+//            if (!empty($updateImages)) {
+//
+//            }
+
+
+            // update product info
+            $product->update($updateInfo);
+//            dd($product);
+            DB::commit();
+
+            $list = Product::all();
+            return view('be.product.list')->with('list', $list);
+
+        } catch (\Exception $exception) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Sua that bai' . $exception->getMessage());
+        }
     }
 
-    public function delete($id)
+    public function delete(Request $request)
     {
         // TODO: Implement delete() method.
+        $product = Product::find($request->id);
+        try {
+            DB::beginTransaction();
+            $product->delete();
+
+            DB::commit();
+            return redirect()->back()->with('success', 'Đã xóa sản phẩm');
+        } catch (\Exception $exception) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Chưa xóa được sản phẩm');
+        }
     }
 
     public function upload(Request $request)

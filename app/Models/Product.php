@@ -2,15 +2,21 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Post
+ *
+ * @mixin Builder
+ */
 class Product extends Model
 {
     use HasFactory;
 
-    protected $fillables = [
-        'cateogory_id',
+    protected $fillable = [
+        'category_id',
         'name',
         'price',
         'quantity',

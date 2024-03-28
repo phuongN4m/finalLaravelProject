@@ -1,7 +1,7 @@
 @extends('be.layout')
 @section('content')
 <div class="col-lg-12">
-    <h2>Thêm tài khoản</h2>
+    <h2>Thêm sản phẩm</h2>
 </div>
 <div>
     <hr>
@@ -27,7 +27,7 @@
         </div>
 
         <div class="form-group">
-            <label for="quantity">Số lượng</label>
+            <label for="quantity">Số lượng </label>
             <input type="number" class="form-control" id="quantity" name="quantity">
         </div>
         <div class="form-group">
