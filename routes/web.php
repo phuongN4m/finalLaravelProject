@@ -19,3 +19,7 @@ Route::get('/', function () {
 
 require_once __DIR__ . "/be.php";
 require_once __DIR__ . "/fe.php";
+
+Route::get('/hihi', function(){
+    return "Hello, world!"
+})
